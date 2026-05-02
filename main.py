@@ -1,16 +1,11 @@
 from fastapi import FastAPI
 from datetime import datetime
 import zoneinfo
-from pydantic import BaseModel
+from modelos.cliente import Cliente
+from modelos.transaccion import Transaccion
+from modelos.factura import Factura
 
 app = FastAPI()
-
-class Cliente(BaseModel):
-    id: int
-    nombre: str
-    descripcion: str | None
-    email: str
-    edad: int
 
 @app.get("/")
 def inicio():
@@ -25,6 +20,8 @@ ciudades = {
     "CL": "Chile"
 }
 
+#reto, devolver la hora en formato de 24 horas
+#esta editado para regresra horas
 @app.get("/hora/{iso_code}")
 def hora(iso_code: str):
     iso = iso_code.upper()
@@ -32,7 +29,15 @@ def hora(iso_code: str):
     tz = zoneinfo.ZoneInfo(zona_lugar)
     return{"Hora": datetime.now(tz)}
 
-#reto, devolver la hora en formato de 24 horas
+
 @app.post("/clientes")
-def crear_cliente(datos_cliente:Cliente):
+def crear_cliente(datos_cliente: Cliente):
     return datos_cliente
+
+@app.post("/transacciones")
+def crear_transaccion(datos_transaccion: Transaccion):
+    return datos_transaccion
+
+@app.post("/facturas")
+def crear_factura(datos_factura: Factura):
+    return datos_factura
