@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from datetime import datetime
 import zoneinfo
-from modelos.cliente import Cliente
+from modelos.cliente import Cliente, ClienteCrear
 from modelos.transaccion import Transaccion
 from modelos.factura import Factura
 
@@ -29,10 +29,17 @@ def hora(iso_code: str):
     tz = zoneinfo.ZoneInfo(zona_lugar)
     return{"Hora": datetime.now(tz)}
 
+#codigo para id
+cliente_id:int = 0
 
-@app.post("/clientes")
-def crear_cliente(datos_cliente: Cliente):
-    return datos_cliente
+
+#es importante post(sin id), y get(con id)
+@app.post("/clientes", response_model=Cliente)
+def crear_cliente(datos_cliente: ClienteCrear):
+    #aqui incrementamos id, y validar datos ingresados (simulando BD)
+    cliente_val = Cliente.model_validate(datos_cliente.model_dump())
+    cliente_val.id = cliente_id + 1
+    return cliente_val#datos_cliente
 
 @app.post("/transacciones")
 def crear_transaccion(datos_transaccion: Transaccion):
