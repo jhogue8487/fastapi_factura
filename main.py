@@ -1,7 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from datetime import datetime
 import zoneinfo
-from modelos.cliente import Cliente, ClienteCrear
+from modelos.cliente import Cliente, ClienteCrear, ClienteEditar
 from modelos.transaccion import Transaccion
 from modelos.factura import Factura
 
@@ -30,7 +30,7 @@ async def hora(iso_code: str):
     return{"Hora": datetime.now(tz)}
 
 #codigo para id, despues se eliminara esta variable por la lista de clientes
-cliente_id:int = 0
+#cliente_id:int = 0
 #crear una lista para guardar datos
 lista_clientes:list[Cliente] = []
 
@@ -46,6 +46,7 @@ async def crear_cliente(datos_cliente: ClienteCrear):
 
 @app.get("/clientes")
 async def listar_clientes():
+    #agregar un mensaje mas claro para el usuario, si no existen clientes.
     return lista_clientes
 
 @app.post("/transacciones")
@@ -55,3 +56,22 @@ async def crear_transaccion(datos_transaccion: Transaccion):
 @app.post("/facturas")
 async def crear_factura(datos_factura: Factura):
     return datos_factura
+
+#RETO: obtener un cliente segun el id
+@app.get("/clientes/{id}")
+async def listar_cliente(id:int):
+    #retornar mensajes claros al usuario, si no existe el cliente
+    return [d for d in lista_clientes if d.id ==id]
+
+#RETO: editar
+#@app.put("/clientes/{id}", response_model=Cliente)
+@app.put("/clientes/{id}")
+def editar_clientes(id:int, datos_cliente:ClienteEditar):
+    for i, obj_cliente in enumerate(lista_clientes):
+        if obj_cliente.id == id:
+            cliente_val = Cliente.model_validate(datos_cliente.model_dump())
+            cliente_val.id = id
+            lista_clientes[i] = cliente_val
+    
+    return {"mensaje":"Se actualizo el cliente satisfactoriamente.","Cliente": cliente_val}
+    #return cliente_val
