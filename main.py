@@ -66,7 +66,7 @@ async def listar_cliente(id:int):
 #RETO: editar
 #@app.put("/clientes/{id}", response_model=Cliente)
 @app.put("/clientes/{id}")
-def editar_clientes(id:int, datos_cliente:ClienteEditar):
+async def editar_clientes(id:int, datos_cliente:ClienteEditar):
     for i, obj_cliente in enumerate(lista_clientes):
         if obj_cliente.id == id:
             cliente_val = Cliente.model_validate(datos_cliente.model_dump())
@@ -75,3 +75,14 @@ def editar_clientes(id:int, datos_cliente:ClienteEditar):
     
     return {"mensaje":"Se actualizo el cliente satisfactoriamente.","Cliente": cliente_val}
     #return cliente_val
+
+@app.delete("/clientes/{id}")
+def eliminar(id:int):
+    for i, obj_cliente in enumerate(lista_clientes):
+        if obj_cliente.id == id:
+            obj_cliente_del = lista_clientes.pop(i)
+            mensaje="Cliente Eliminado."
+        else:
+            mensaje ="El ID del cliente no existe."
+            obj_cliente_del={}
+    return {"mensaje":mensaje, "cliente": obj_cliente_del}
