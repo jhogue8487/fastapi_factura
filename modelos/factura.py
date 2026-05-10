@@ -6,6 +6,10 @@ class Factura(BaseModel):
     id: int
     cliente: Cliente
     transacciones: list[Transaccion]
+    total: int
 
-#Ahora que ya leíste todos los archivos, termina de conectar los puntoss.
-#Factura.model_rebuild()
+    @property
+    def cantidad_total(self):
+        #return sum(transaccion.cantidad for transaccion in self.transacciones)
+        for transacciones in self.transacciones:
+            return sum(transacciones.cantidad)
