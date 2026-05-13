@@ -35,7 +35,7 @@ async def hora(iso_code: str):
 lista_clientes:list[Cliente] = []
 
 #es importante post(sin id), y get(con id)
-@app.post("/clientes", response_model=Cliente)
+@app.post("/clientes", response_model=Cliente, tags=["Clientes"])
 async def crear_cliente(datos_cliente: ClienteCrear):
     #aqui incrementamos id, y validar datos ingresados (simulando BD)
     cliente_val = Cliente.model_validate(datos_cliente.model_dump())
@@ -44,7 +44,7 @@ async def crear_cliente(datos_cliente: ClienteCrear):
     lista_clientes.append(cliente_val)
     return cliente_val#datos_cliente
 
-@app.get("/clientes")
+@app.get("/clientes", tags=["Clientes"])
 async def listar_clientes():
     #agregar un mensaje mas claro para el usuario, si no existen clientes.
     return lista_clientes
