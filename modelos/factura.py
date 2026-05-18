@@ -4,6 +4,7 @@ from .transaccion import Transaccion
 
 class FacturaBase(BaseModel):
     cliente: Cliente
+    fecha: str
     transacciones: list[Transaccion]
     total: float
 
