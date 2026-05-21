@@ -1,6 +1,6 @@
 from pydantic import BaseModel, computed_field
-from modelos.cliente import Cliente
-from .transaccion import Transaccion
+from app.modelos.clientes import Cliente
+from .transacciones import Transaccion
 
 
 class FacturaBase(BaseModel):
