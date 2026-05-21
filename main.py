@@ -114,20 +114,22 @@ async def crear_fatura(cliente_id: int, datos_factura: FacturaCrear):
             cliente_encontrado = c
             break
 
-    # si no se encuentra el cliente mostrar este mensaje
+    # si no se encuentra el cliente, primer ejemplo error sin status(codigos)
     if not cliente_encontrado:
         raise HTTPException(
             status_code=400,
-            detail=f"Error: no se encuentra el cliente con id {cliente_id}.",
+            detail=f"Error: no se encuentra el cliente con id {cliente_id}, debes agregar el cliente.",
         )
 
     # crear factura
     # validar datos factura
     factura_val = Factura.model_validate(datos_factura.model_dump())
     factura_val.cliente = cliente_encontrado
+    factura_val.fecha = datetime.now()
     factura_val.id = len(lista_facturas) + 1
-    factura_val.transacciones = []
+    # factura_val.transacciones = []
     lista_facturas.append(factura_val)
+
     return factura_val
 
 
@@ -152,7 +154,7 @@ async def crear_transaccion(
     if not cliente_encontrado:
         raise HTTPException(
             status_code=400,
-            detail=f"Error 400: No existe un cliente con ese id: {cliente_id}",
+            detail=f"Error 400: No existe un cliente con ese id: {cliente_id}, debes crear el cliente.",
         )
 
     # CONSULTAR FACTURA
