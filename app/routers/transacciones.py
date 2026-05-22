@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException
+from datetime import datetime
+
 from ..modelos.transacciones import Transaccion, TransaccionCrear
-from ..modelos.clientes import Cliente
-from ..modelos.facturas import Factura
+from ..modelos.facturas import Factura, FacturaCrear
 from ..listas import lista_transacciones, lista_clientes, lista_facturas
 
 ruta_transanccciones = APIRouter()
@@ -32,14 +33,14 @@ async def crear_transaccion(
         )
 
     # CONSULTAR FACTURA
-    # factura_existente = next((f for f in lista_facturas if f.id == factura_id), None)
+    # factura_encontrada = next((f for f in lista_facturas if f.id == factura_id), None)
     factura_encontrada = None
     for f in lista_facturas:
         if f.id == factura_id:
             factura_encontrada = f
             break
 
-    # factura_final, mensaje = "", ""
+    # si la factura encontrada
     if factura_encontrada:
         # comprobar la factura con el id de cliente
         if factura_encontrada.cliente.id == cliente_id:
@@ -53,25 +54,23 @@ async def crear_transaccion(
             mensaje = f"Transaccion agregada a factura {factura_encontrada.id}"
             factura_final = factura_encontrada
             return {"mensaje": mensaje, "factura": factura_final}
-        # este else esta por eliminarse, esperar el funcionamiento
         else:
-            # creamos una nueva factura
-            # factura_nueva = Factura()
-            # factura_nueva =
             mensaje = f"Se encontro la factura de id: {factura_id}, pero es de otro cliente id: {cliente_id}"
             factura_final = factura_encontrada
             return {"mensaje": mensaje, "factura encontrada": factura_final}
     else:
         # si no se ha encontrado una factura,
 
-        # creamos la factura(cliente, fecha, transacciones)
+        # validamos datos de la transaccion, y despues creamos la factura
         transaccion_val = Transaccion.model_validate(datos_transaccion.model_dump())
         transaccion_val.id = len(lista_transacciones) + 1
-        transaccion_val.factura_id = factura_id
+        transaccion_val.factura_id = len(lista_facturas) + 1
+
+        # creamos la factura(cliente, fecha, transacciones)
         factura = FacturaCrear(
             cliente=cliente_encontrado,
             fecha=str(datetime.now()),
-            transacciones=lista_transacciones,
+            transacciones=[transaccion_val],
         )
 
         # datos_transaccion.vr_unitario * datos_transaccion.cantidad,
@@ -80,9 +79,9 @@ async def crear_transaccion(
         lista_facturas.append(factura_val)
 
         # Creamos la trasaccion (cantidad, vr_unitario, descripcion, factura_id)
-        transaccion_val = Transaccion.model_validate(datos_transaccion.model_dump())
-        transaccion_val.id = len(lista_transacciones) + 1
-        transaccion_val.factura_id = factura_id
+        # transaccion_val = Transaccion.model_validate(datos_transaccion.model_dump())
+        # transaccion_val.id = len(lista_transacciones) + 1
+        # transaccion_val.factura_id = factura_id
         lista_transacciones.append(transaccion_val)
 
         return {
