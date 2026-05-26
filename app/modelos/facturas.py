@@ -17,18 +17,12 @@ class FacturaBase(SQLModel):
     @computed_field
     @property
     def valor_total(self) -> float:
-        # consultar id actual para poder filtrar cuando guardamos en memoria.
+        # # consultar id actual para poder filtrar cuando guardamos en memoria.
+        # con bd sqlmodel realiza el filtro
         factura_id_actual = getattr(self, "id", None)
         if factura_id_actual is None or not self.transacciones:
             return 0.0
-        return sum(
-            t.cantidad * t.vr_unitario
-            for t in self.transacciones
-            if t.factura_id == factura_id_actual
-        )
-        # for t in self.transacciones:
-        #     if t.factura_id == factura_id_actual:
-        #         return sum(t.cantidad * t.vr_unitario)
+        return sum(t.cantidad * t.vr_unitario for t in self.transacciones)
 
 
 class FacturaCrear(FacturaBase):
@@ -43,7 +37,7 @@ class Factura(FacturaBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     cliente_id: int = Field(foreign_key="cliente.id")
     # Relacion virtual no en BD, obtener datos
-    cliente: Optional["Cliente"] = Relationship(
-        back_populates="facturas"
+    factura_cli: Optional["Cliente"] = Relationship(
+        back_populates="cliente_fac"
     )  # esta variable con modelo cliente y viceversa.
-    # transacciones: list["Transaccion"] = Relationship(back_populates="factura")
+    factura_tra: list["Transaccion"] = Relationship(back_populates="transaccion_fac")

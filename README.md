@@ -32,6 +32,14 @@ Ahora realizaremos el uso de la base de datos SQLite:
    Define un modelo ClienteBase para los datos comunes.
    Crea un modelo Cliente, que herede de ClienteBase y de SQLModel, con table=True para almacenar los registros en la tabla correspondiente.
 
---------Ahora realacionar la tabla factura con clientes----------
+--------Ahora realacionar la tabla-modelos factura con clientes----------
 Editar el archivo facturas modelo, realizar las importaciones de SQLModel, y los ajustes correspondientes.
-En factura tenermo el objeto_cliente y la lista_transacciones, que no pueden ir en BD
+En factura tenemos el objeto_cliente y la lista_transacciones, que no pueden ir en BD, realizamos lo siguiente:
+Modelo facturas tiene:
+Atributo Cliente, pasa como llave foranea como cliente_id: Field(foreign_key="cliente.id") y tambien una relacion virtual: Relationship(
+back_populates="factura") y viceversa con el modelo clientes
+Atributo fecha, sigue tal cual.
+Atributo transacciones: list[Transaccion] = [], una lista pasa como una relacion virtual: Relationship(
+back_populates="factura") y viceversa con el modelo tranasacciones.
+
+NOTA: si tiene relacion con los otros modelos se deben aplicar las relaciones

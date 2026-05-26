@@ -25,6 +25,6 @@ class ClienteEditar(ClienteBase):
 class Cliente(ClienteBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
     # Relacion virtual, no en BD, obtener datos
-    facturas: list["Factura"] = Relationship(
-        back_populates="cliente"
-    )  # esta variable con modelo factura y viceversa
+    cliente_fac: list["Factura"] = Relationship(
+        back_populates="factura_cli"
+    )  # esta variable se relaciona con modelo factura y viceversa
