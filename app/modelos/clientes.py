@@ -1,5 +1,10 @@
+from typing import TYPE_CHECKING
+
 from pydantic import BaseModel
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
+
+if TYPE_CHECKING:
+    from .facturas import Factura
 
 
 class ClienteBase(SQLModel):
@@ -19,3 +24,7 @@ class ClienteEditar(ClienteBase):
 
 class Cliente(ClienteBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
+    # Relacion virtual, no en BD, obtener datos
+    facturas: list["Factura"] = Relationship(
+        back_populates="cliente"
+    )  # esta variable con modelo factura y viceversa

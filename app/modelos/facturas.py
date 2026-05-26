@@ -1,18 +1,23 @@
+from typing import Optional, TYPE_CHECKING
+
 from pydantic import BaseModel, computed_field
-from app.modelos.clientes import Cliente
-from .transacciones import Transaccion
+from sqlmodel import Relationship, SQLModel, Field
+
+# solo para no mostrar advertencias de pylance en nuestro codigo.
+if TYPE_CHECKING:
+    from .clientes import Cliente
+    from .transacciones import Transaccion
 
 
-class FacturaBase(BaseModel):
-    cliente: Cliente
-    fecha: str
-    transacciones: list[Transaccion] = []
-    # valor_ total: propiedad virtual por los decoradores del metodo del calculo.
+class FacturaBase(SQLModel):
+    # cliente: Cliente#pasa como llave foranea
+    fecha: str = Field(default=None)
+    # transacciones: list[Transaccion] = []#pasa como llave foranea, en el modelo transacciones
 
     @computed_field
     @property
     def valor_total(self) -> float:
-        # consultar id actual para poder filtrar
+        # consultar id actual para poder filtrar cuando guardamos en memoria.
         factura_id_actual = getattr(self, "id", None)
         if factura_id_actual is None or not self.transacciones:
             return 0.0
@@ -34,5 +39,11 @@ class FacturaEditar(FacturaBase):
     pass
 
 
-class Factura(FacturaBase):
-    id: int | None = None
+class Factura(FacturaBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    cliente_id: int = Field(foreign_key="cliente.id")
+    # Relacion virtual no en BD, obtener datos
+    cliente: Optional["Cliente"] = Relationship(
+        back_populates="facturas"
+    )  # esta variable con modelo cliente y viceversa.
+    # transacciones: list["Transaccion"] = Relationship(back_populates="factura")

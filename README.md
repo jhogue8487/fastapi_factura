@@ -31,3 +31,7 @@ Ahora realizaremos el uso de la base de datos SQLite:
    Ejemplo de implementación:
    Define un modelo ClienteBase para los datos comunes.
    Crea un modelo Cliente, que herede de ClienteBase y de SQLModel, con table=True para almacenar los registros en la tabla correspondiente.
+
+--------Ahora realacionar la tabla factura con clientes----------
+Editar el archivo facturas modelo, realizar las importaciones de SQLModel, y los ajustes correspondientes.
+En factura tenermo el objeto_cliente y la lista_transacciones, que no pueden ir en BD
