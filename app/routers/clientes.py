@@ -23,9 +23,11 @@ async def crear_cliente(datos_cliente: ClienteCrear, sesion: Sesion_dependencia)
 @ruta_clientes.get("/clientes", response_model=list[Cliente], tags=["Clientes"])
 async def listar_clientes(sesion: Sesion_dependencia):
     # agregar un mensaje mas claro para el usuario, si no existen clientes.
-    # podemos crera una variable o retornar directamente
-    return sesion.exec(select(Cliente)).all()
-    # return lista_clientes
+    # podemos crera una variable o retornar directamente, como la siguiente linea
+    # return sesion.exec(select(Cliente)).all()
+    consulta = select(Cliente)
+    lista_clientes = sesion.exec(consulta).all()
+    return lista_clientes
 
 
 # RETO: obtener un cliente segun el id
